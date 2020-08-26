@@ -1,0 +1,23 @@
+
+ý
+#airframes_client_output_frame.proto"Í
+AirframesClientOutputFrame:
+source (2".AirframesClientOutputFrame.SourceRsourceC
+	airframes (2%.AirframesClientOutputFrame.AirframesR	airframes
+payload (	Rpayload®
+Source8
+app (2&.AirframesClientOutputFrame.Source.AppRapp;
+host (2'.AirframesClientOutputFrame.Source.HostRhost
+type (	Rtype
+format (	Rformat3
+App
+name (	Rname
+version (	RversionL
+Host
+platform (	Rplatform
+os (	Ros
+version (	Rversionc
+	Airframes>
+feed (2*.AirframesClientOutputFrame.Airframes.FeedRfeed
+Feed
+id (	Ridbproto3
