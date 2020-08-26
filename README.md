@@ -4,25 +4,26 @@
 
 Optionally install packages for support.
 
-acarsdec
-vdlm2dec
-dumpvdl2
-acarsdeco2
-jaero
+* acarsdec
+* vdlm2dec
+* dumpvdl2
+* acarsdeco2
+* jaero
 
 ## Interface
 
 ### Init
-/etc/init.d/airframes-client start
-/etc/init.d/airframes-client stop
-/etc/init.d/airframes-client restart
+`/etc/init.d/airframes-client start`
+`/etc/init.d/airframes-client stop`
+`/etc/init.d/airframes-client restart`
+
 
 ### Binaries/scripts
-/usr/local/bin/afc
-/usr/local/bin/airframes-config
+`/usr/local/bin/afc`
+`/usr/local/bin/airframes-config`
 
 ### Config
-/boot/airframes.json
+`/boot/airframes.json`
 
 ```
 {
@@ -112,10 +113,12 @@ jaero
 
 
 ### Setup
+```
 /usr/local/bin/airframes-config                    # Loads ncurses menu to configure airframes client
 /usr/local/bin/airframes-config set <var> <value>  # Set a specific config variable to a value
 /usr/local/bin/airframes-config get <var>          # Look at current value for a config variable
 /usr/local/bin/airframes-config login              # Prompt to login (and store a token)
+```
 
 ```
 /usr/local/bin/airframes-config set decoder.acarsdec.enabled true
