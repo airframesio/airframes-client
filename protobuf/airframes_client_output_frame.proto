@@ -11,6 +11,7 @@ message AirframesClientOutputFrame {
         DUMPVDL2 = 4;
         JAERO = 5;
         PC_HFDL = 6;
+        SORCERER = 7;
       }
       AppType type = 1;
       string version = 2;
