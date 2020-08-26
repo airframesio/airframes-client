@@ -13,14 +13,14 @@ Optionally install packages for support.
 ## Interface
 
 ### Init
-`/etc/init.d/airframes-client start`
-`/etc/init.d/airframes-client stop`
-`/etc/init.d/airframes-client restart`
+* `/etc/init.d/airframes-client start`
+* `/etc/init.d/airframes-client stop`
+* `/etc/init.d/airframes-client restart`
 
 
 ### Binaries/scripts
-`/usr/local/bin/afc`
-`/usr/local/bin/airframes-config`
+* `/usr/local/bin/afc`
+* `/usr/local/bin/airframes-config`
 
 ### Config
 `/boot/airframes.json`
