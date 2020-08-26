@@ -10,7 +10,7 @@
       "version": "Debian 10"
     },
     "type": "acars",
-    "format": "pp"
+    "format": "json_acarsdec"
   },
   "airframes": {
     "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" }
