@@ -159,7 +159,7 @@ JSON:
     "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" }
   },
   "payload": {
-    { "timestamp": 1597519975.7317891, "station_id": "KE-KMHR1", "channel": 2, "freq": 131.725, "level": -31, "error": 0, "mode": "2", "label": "SQ", "text": "00XS" }
+    "timestamp": 1597519975.7317891, "station_id": "KE-KMHR1", "channel": 2, "freq": 131.725, "level": -31, "error": 0, "mode": "2", "label": "SQ", "text": "00XS"
   }
 }
 ```
