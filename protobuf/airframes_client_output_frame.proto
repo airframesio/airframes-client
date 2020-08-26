@@ -10,6 +10,7 @@ message AirframesClientOutputFrame {
         VDLM2DEC = 3;
         DUMPVDL2 = 4;
         JAERO = 5;
+        PC_HFDL = 6;
       }
       AppType type = 1;
       string version = 2;
@@ -23,6 +24,7 @@ message AirframesClientOutputFrame {
         X86_64 = 2;
         ARM_V6 = 3;
         ARM_V7 = 4;
+        ARM_64 = 5;
       }
       Platform platform = 1;
       enum OperatingSystem {
