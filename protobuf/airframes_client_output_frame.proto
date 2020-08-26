@@ -14,6 +14,7 @@ message AirframesClientOutputFrame {
         SORCERER = 7;
       }
       AppType type = 1;
+
       string version = 2;
     }
     App app = 1;
@@ -28,6 +29,7 @@ message AirframesClientOutputFrame {
         ARM_64 = 5;
       }
       Platform platform = 1;
+
       enum OperatingSystem {
         UNKNOWN_OPERATING_SYSTEM = 0;
         LINUX = 1;
@@ -35,12 +37,29 @@ message AirframesClientOutputFrame {
         WINDOWS = 3;
       }
       OperatingSystem os = 2;
+
       string version = 3;
     }
     Host host = 2;
 
-    string type = 3;
-    string format = 4;
+    enum SourceType {
+      ACARS = 0;
+      VDL = 1;
+      HFDL = 2;
+      AERO = 3;
+    }
+    SourceType type = 3;
+
+    enum SourceFormat {
+      HUMAN_READABLE_TEXT = 0;
+      BEAST = 1;
+      SBS3 = 2;
+      PLANE_PLOTTER = 3;
+      JSON_GENERIC = 4;
+      JSON_ACARSDEC = 5;
+      JSON_VDLM2DEC = 6;
+    }
+    SourceFormat format = 4;
   }
   Source source = 1;
 
