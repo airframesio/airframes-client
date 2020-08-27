@@ -34,13 +34,13 @@ Optionally install packages for support.
       "wifi": {
         "ssid": "YOUR SSID",
         "passphrase": "YOUR PASSPHRASE"
-      },
+      }
     },
     "location": {
       "altitude": 100,
       "latitude": "0.0",
       "longitude": "0.0"
-    }
+    },
     "devices": [
 
     ]
@@ -49,15 +49,13 @@ Optionally install packages for support.
     {
       "input": {
         "type": "client",
-        "client": {
-          "type": "acarsdec",
-          "path": "/usr/local/bin/acarsdec",
-          "config": {
-            "verbose": true,
-            "gain": 40,
-            "ident": "KE-KMHR1",
-            "frequencies": ["131.550", "131.525", "131.725", "130.025", "130.450", "131.125"]
-          }
+        "name": "acarsdec",
+        "path": "/usr/local/bin/acarsdec",
+        "config": {
+          "verbose": true,
+          "gain": 40,
+          "ident": "KE-KMHR1",
+          "frequencies": ["131.550", "131.525", "131.725", "130.025", "130.450", "131.125"]
         }
       },
       "outputs": [
@@ -80,14 +78,12 @@ Optionally install packages for support.
     {
       "input": {
         "type": "client",
-        "client": {
-          "type": "dumpvdl2",
-          "path": "/usr/local/bin/dumpvdl2",
-          "config": {
-            "verbose": false,
-            "gain": 40,
-            "frequencies": ["136.650", "136.800", "136.975"]
-          }
+        "name": "dumpvdl2",
+        "path": "/usr/local/bin/dumpvdl2",
+        "config": {
+          "verbose": false,
+          "gain": 40,
+          "frequencies": ["136.650", "136.800", "136.975"]
         }
       },
       "outputs": [
