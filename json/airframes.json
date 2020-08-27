@@ -19,27 +19,34 @@
   },
   "decoders": [
     {
+      "name": "acarsdec",
       "input": {
         "type": "client",
         "name": "acarsdec",
         "path": "/usr/local/bin/acarsdec",
         "config": {
+          "receiver": "0",
           "verbose": true,
-          "gain": 40,
+          "gain": 400,
           "ident": "KE-KMHR1",
           "frequencies": ["131.550", "131.525", "131.725", "130.025", "130.450", "131.125"]
         }
       },
       "outputs": [
         {
-          "type": "udp",
+          "type": "logfile",
+          "format": "af.json.v1",
+          "path": "/var/log/airframes/acarsdec.data.json"
+        },
+        {
+          "type": "net:udp",
           "format": "af.json.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
           "hostname": "feed.acars.io",
           "port": 6000
         },
         {
-          "type": "udp",
+          "type": "net:udp",
           "format": "af.protobuf.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
           "hostname": "feed.acars.io",
@@ -48,26 +55,67 @@
       ]
     },
     {
+      "name": "vdlm2dec",
       "input": {
         "type": "client",
-        "name": "dumpvdl2",
-        "path": "/usr/local/bin/dumpvdl2",
+        "name": "vdlm2dec",
+        "path": "/usr/local/bin/vdlm2dec",
         "config": {
-          "verbose": false,
-          "gain": 40,
+          "receiver": "1",
+          "gain": 400,
+          "ident": "KE-KMHR2",
           "frequencies": ["136.650", "136.800", "136.975"]
         }
       },
       "outputs": [
         {
-          "type": "udp",
+          "type": "logfile",
+          "format": "af.json.v1",
+          "path": "/var/log/airframes/vdlm2dec.data.json"
+        },
+        {
+          "type": "net:udp",
           "format": "af.json.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
           "hostname": "feed.acars.io",
           "port": 6000
         },
         {
-          "type": "udp",
+          "type": "net:udp",
+          "format": "af.protobuf.v1",
+          "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
+          "hostname": "feed.acars.io",
+          "port": 6001
+        }
+      ]
+    },
+    {
+      "name": "dumpvdl2",
+      "input": {
+        "type": "client",
+        "name": "dumpvdl2",
+        "path": "/usr/local/bin/dumpvdl2",
+        "config": {
+          "receiver": "2",
+          "gain": 40,
+          "frequencies": ["136650000", "136800000", "136975000"]
+        }
+      },
+      "outputs": [
+        {
+          "type": "logfile",
+          "format": "af.json.v1",
+          "path": "/var/log/airframes/dumpvdl2.data.json"
+        },
+        {
+          "type": "net:udp",
+          "format": "af.json.v1",
+          "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
+          "hostname": "feed.acars.io",
+          "port": 6000
+        },
+        {
+          "type": "net:udp",
           "format": "af.protobuf.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
           "hostname": "feed.acars.io",
