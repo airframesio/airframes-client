@@ -6,7 +6,7 @@
       "wifi": {
         "ssid": "YOUR SSID",
         "passphrase": "YOUR PASSPHRASE"
-      },
+      }
     },
     "location": {
       "altitude": 100,
