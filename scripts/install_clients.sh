@@ -14,6 +14,7 @@ git clone https://github.com/TLeconte/acarsdec.git
 git clone https://github.com/szpajder/libacars
 git clone https://github.com/romanbsd/statsd-c-client.git
 git clone https://github.com/airframesio/dumpvdl2.git
+git clone https://github.com/TLeconte/vdlm2dec.git
 
 echo "[Airframes] Building libacars"
 cd ${SOURCE_PATH}/libacars
@@ -38,4 +39,11 @@ cd ${SOURCE_PATH}/dumpvdl2
 mkdir build
 cd build
 cmake ../
+make && make install
+
+echo "[Airframes] Building vdlm2dec"
+cd ${SOURCE_PATH}/vdlm2dec
+mkdir build 
+cd build
+cmake .. -Drtl=ON
 make && make install
