@@ -141,7 +141,7 @@ class AirframesGRPCOutput(Output):
       )
       return grpc_frame
     elif client_input.name == 'vdlm2dec':
-      vdlm2dec_message = airframes_client_frame_pb2.AcarsdecMessage(
+      vdlm2dec_message = airframes_client_frame_pb2.Vdlm2decMessage(
         timestamp=message['timestamp'],
         station_id=message.setdefault('station_id', None),
         channel=message.setdefault('channel', None),
