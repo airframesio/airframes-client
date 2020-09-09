@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package airframes;
+
+// Decoder Clients
+
+message AcarsdecMessage {
+  double timestamp = 1;
+  string station_id = 2;
+  uint32 channel = 3;
+  double frequency = 4;
+  sint32 level = 5;
+  uint32 error = 6;
+  string mode = 7;
+  string label = 8;
+  string block_id = 9;
+  string ack = 10;
+  string tail = 11;
+  string flight = 12;
+  string message_number = 13;       // msgno
+  string text = 14;
+  bool end = 15;
+}
+
+message Vdlm2decMessage {
+  double timestamp = 1;
+  string station_id = 2;
+  uint32 channel = 3;
+  double frequency = 4;
+  uint32 from_icao = 5;             // icao
+  uint32 to_icao = 6;               // toaddr
+  sint32 level = 7;
+  uint32 error = 8;
+  string mode = 9;
+  string label = 10;
+  string block_id = 11;
+  string ack = 12;
+  string tail = 13;
+  string flight = 14;
+  string message_number = 15;      // msgno
+  string text = 16;
+  bool end = 17;
+  string departure_airport = 18;   // depa
+  string destination_airport = 19; // dsta
+  string arrival_eta = 20;         // eta
+  string gate_out = 21;            // gtout
+  string ground_off = 22;          // wloff
+  string ground_on = 23;           // wlin
+  string gate_in = 24;             // gtin
+}
+
+
+// Airframes.io Specific
+
+service Airframes {
+  rpc SendExampleFrame(TestRequest) returns (AirframesClientFrame) {}
+  rpc SendFrame(AirframesClientFrame) returns (AirframesClientFrame) {}
+  rpc GetFrame(FrameRequest) returns (AirframesClientFrame) {}
+  rpc GetFrames(FrameRequest) returns (stream AirframesClientFrame) {}
+}
+
+message TestRequest {
+}
+
+message FrameRequest {
+}
+
+message AirframesClientFrame {
+  message Source {
+    message App {
+      enum AppType {
+        UNKNOWN_APP_TYPE = 0;
+        ACARSDEC = 1;
+        ACARSDECO2 = 2;
+        VDLM2DEC = 3;
+        DUMPVDL2 = 4;
+        JAERO = 5;
+        PC_HFDL = 6;
+        SORCERER = 7;
+      }
+      AppType type = 1;
+
+      string version = 2;
+    }
+    App app = 1;
+
+    message Host {
+      enum Platform {
+        UNKNOWN_PLATFORM = 0;
+        X86_32 = 1;
+        X86_64 = 2;
+        ARM_V6 = 3;
+        ARM_V7 = 4;
+        ARM_64 = 5;
+      }
+      Platform platform = 1;
+
+      enum OperatingSystem {
+        UNKNOWN_OPERATING_SYSTEM = 0;
+        LINUX = 1;
+        MACOS = 2;
+        WINDOWS = 3;
+      }
+      OperatingSystem os = 2;
+
+      string version = 3;
+      string node_name = 4;
+      string node_ip = 5;
+    }
+    Host host = 2;
+
+    enum SourceType {
+      ACARS = 0;
+      VDL = 1;
+      HFDL = 2;
+      AERO = 3;
+    }
+    SourceType type = 3;
+
+    enum SourceFormat {
+      HUMAN_READABLE_TEXT = 0;
+      BEAST = 1;
+      SBS3 = 2;
+      PLANE_PLOTTER = 3;
+      JSON_GENERIC = 4;
+      JSON_ACARSDEC = 5;
+      JSON_VDLM2DEC = 6;
+    }
+    SourceFormat format = 4;
+  }
+  Source source = 1;
+
+  message AirframesConfig {
+    message Feed {
+      string id = 1;
+    }
+    Feed feed = 1;
+  }
+  AirframesConfig airframes = 2;
+
+  oneof message {
+    AcarsdecMessage acarsdec_message = 3;
+    Vdlm2decMessage vdlm2dec_message = 4;
+  }
+}
