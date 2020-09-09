@@ -6,14 +6,15 @@ echo "[Airframes] Installing system dependencies"
 apt update
 apt install -y build-essential cmake git libglib2.0-dev pkg-config librtlsdr-dev libsqlite3-dev libprotobuf-c-dev libzmq3-dev
 
+echo "[Airframes] Pulling down sources"
 mkdir -p ${SOURCE_PATH}
 cd ${SOURCE_PATH}
-
-echo "[Airframes] Pulling down sources"
+git clone https://github.com/airframesio/airframes-client.git
 git clone https://github.com/TLeconte/acarsdec.git
 git clone https://github.com/szpajder/libacars
 git clone https://github.com/romanbsd/statsd-c-client.git
 git clone https://github.com/airframesio/dumpvdl2.git
+git clone https://github.com/TLeconte/vdlm2dec.git
 
 echo "[Airframes] Building libacars"
 cd ${SOURCE_PATH}/libacars
@@ -38,4 +39,11 @@ cd ${SOURCE_PATH}/dumpvdl2
 mkdir build
 cd build
 cmake ../
+make && make install
+
+echo "[Airframes] Building vdlm2dec"
+cd ${SOURCE_PATH}/vdlm2dec
+mkdir build
+cd build
+cmake .. -Drtl=ON
 make && make install
