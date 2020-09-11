@@ -21,9 +21,12 @@ import distro
 import airframes_client_frame_pb2
 import airframes_client_frame_pb2_grpc
 
+VERSION='1.0.0'
+
+### Outputs
+
 class Output:
   def __init__(self, raw_config_data):
-    print(raw_config_data)
     self.raw_config_data = raw_config_data
     self.output_type = raw_config_data['type']
     self.format = raw_config_data['format']
@@ -177,9 +180,13 @@ class AirframesGRPCOutput(Output):
       pass
 
   def send_message(self, message, client_input):
-    print("AirframesGRPCOutput: Sending {} from {}".format(message, client_input))
     grpc_frame = self.create_airframes_message_frame(client_input, message)
-    self.stub.SendFrame(grpc_frame)
+    try:
+      self.stub.SendFrame(grpc_frame)
+      # print("Sent {} bytes by gRPC to {}:{}: {} - ({} bytes) - {}".format(grpc_frame.ByteSize(), self.hostname, self.port, client_input.name, grpc_frame.acarsdec_message.ByteSize(), grpc_frame))
+      print("Sent {} bytes by gRPC to {}:{} ({}, message: {} bytes)".format(grpc_frame.ByteSize(), self.hostname, self.port, client_input.name, grpc_frame.acarsdec_message.ByteSize()))
+    except grpc.RpcError as rpc_error_call:
+      print('Error sending by gRPC to {}:{} ({}, message: {})'.format(self.hostname, self.port, rpc_error_call.code(), rpc_error_call.details()))
 
 class LogfileOutput(Output):
   def __init__(self, raw_config_data):
@@ -189,14 +196,17 @@ class LogfileOutput(Output):
   def output_name(self):
     return '{}:{}'.format(self.output_type, self.path)
 
+
+### Inputs
+
 class ClientInput:
   def __init__(self, raw_config_data):
-    print(raw_config_data)
     self.raw_config_data = raw_config_data
     self.input_type = raw_config_data['input']['type']
     self.name = raw_config_data['input']['name']
     self.path = raw_config_data['input']['path']
     self.raw_input_config = raw_config_data['input']['config']
+    self.pid = None
     self.outputs = []
 
     output_classes = {
@@ -249,7 +259,7 @@ class Vdlm2decClientInput(ClientInput):
     self.frequencies = self.raw_input_config['frequencies']
 
   def params(self):
-    return '-v -J -G -E -U -g {gain} -i {ident} -j 0.0.0.0:5555 -r {receiver} {frequencies}'.format(ident=self.ident, receiver=self.receiver, gain=self.gain, frequencies=" ".join(self.frequencies))
+    return '-v -J -G -E -U -g {gain} -i {ident} -r {receiver} {frequencies}'.format(ident=self.ident, receiver=self.receiver, gain=self.gain, frequencies=" ".join(self.frequencies))
 
   def system_version(self):
     cmd = 'vdlm2dec -h 2>&1 | head -2 | tail -1 | cut -d " " -f 2'
@@ -270,6 +280,9 @@ class Dumpvdl2ClientInput(ClientInput):
     cmd = 'dumpvdl2 --version 2>&1 | cut -d " " -f 2'
     result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf-8')
     return result.strip() if (result != None) else None
+
+
+### Support
 
 class LogPipe(threading.Thread):
 
@@ -302,62 +315,192 @@ class LogPipe(threading.Thread):
         """
         os.close(self.fdWrite)
 
-def append_to_logfile(path, line):
-  with open(path, 'a') as f:
-    f.write('{}\n'.format(line))
+class Log:
+  @staticmethod
+  def append_to_logfile(path, line):
+    with open(path, 'a') as f:
+      f.write('{}\n'.format(line))
 
-def broadcast_message(input, outputs, message):
-  for o in outputs:
-    if o.format == 'af.json.v1':
-      if o.output_type == 'net:udp':
-        send_udp_string(o.hostname, o.port, json.dumps(message))
-      if o.output_type == 'logfile':
-        append_to_logfile(o.path, json.dumps(message))
-    if o.format == 'af.protobuf.v1':
-      if o.output_type == 'net:grpc':
-        o.send_message(message, input)
+class Communication:
+  @staticmethod
+  def broadcast_message(input, message):
+    if input.outputs:
+      Communication.broadcast_message_to_outputs(input, input.outputs, message)
+    else:
+      print('Not broadcasting due to lack of output config for decoder {}: {}'.format(input.name, json.dumps(message)))
 
-def load_config(full_path):
-  with open(full_path) as f:
-    config = json.load(f)
-  return config
+  @staticmethod
+  def broadcast_message_to_outputs(input, outputs, message):
+    for o in outputs:
+      if o.format == 'af.json.v1':
+        if o.output_type == 'net:udp':
+          Communication.send_udp_string(o.hostname, o.port, json.dumps(message))
+        if o.output_type == 'logfile':
+          Log.append_to_logfile(o.path, json.dumps(message))
+      if o.format == 'af.protobuf.v1':
+        if o.output_type == 'net:grpc':
+          o.send_message(message, input)
 
-def send_message_to_outputs(input, message):
-  if input.outputs:
-    broadcast_message(input, input.outputs, message)
-  else:
-    print('Not broadcasting due to lack of output config for decoder {}: {}'.format(input.name, json.dumps(message)))
+  @staticmethod
+  def send_udp(dest_ip, dest_port, message_bytes):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.sendto(message_bytes, (dest_ip, dest_port))
+    # print("Sent {} bytes by UDP to {}:{}".format(len(message_bytes), dest_ip, dest_port, message_bytes.decode()))
+    print("Sent {} bytes by UDP to {}:{}".format(len(message_bytes), dest_ip, dest_port))
 
-def send_udp(dest_ip, dest_port, message_bytes):
-  sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-  sock.sendto(message_bytes, (dest_ip, dest_port))
-  print("Sent {} bytes by UDP to {}:{}: {}".format(len(message_bytes), dest_ip, dest_port, message_bytes.decode()))
+  @staticmethod
+  def send_udp_string(dest_ip, dest_port, message):
+    message_encoded = message.encode()
+    Communication.send_udp(dest_ip, dest_port, message_encoded)
 
-def send_udp_string(dest_ip, dest_port, message):
-  message_encoded = message.encode()
-  send_udp(dest_ip, dest_port, message_encoded)
+class Pid:
+  @staticmethod
+  def get_pid(path):
+    try:
+      with open(path) as f:
+        pid = f.readline().rstrip('\n')
+        if pid != None and pid != '':
+          return pid
+        f.close()
+    except:
+      return None
+    return None
+
+  @staticmethod
+  def remove_pid(path):
+    try:
+      os.remove(path)
+    except:
+      return True
+    return True
+
+  @staticmethod
+  def store_pid(path, pid):
+    try:
+      with open(path, 'w') as f:
+        f.write(str(pid))
+        f.close()
+    except IOError as error:
+      print('Unable to create pid file {}. {}'.format(path, error))
+      return False
+    return True
+
+class Main:
+  @staticmethod
+  def load_config(full_path):
+    print('Loading config')
+    with open(full_path) as f:
+      config = json.load(f)
+    # print(json.dumps(config))
+    # print()
+    return config
+
+  @staticmethod
+  def mkdir(path):
+    try:
+      os.mkdir(path, 0o755)
+    except FileExistsError as error:
+      return True
+    except OSError as error:
+      print('Unable to make directory {}. {}'.format(path, error))
+      return False
+    return True
+
+  @staticmethod
+  def prepare_system():
+    if Main.mkdir('/var/run/airframes') == False:
+      return False
+
+  @staticmethod
+  def setup_inputs(config):
+    inputs = []
+    input_classes = {
+      'acarsdec': AcarsdecClientInput,
+      'dumpvdl2': Dumpvdl2ClientInput,
+      'vdlm2dec': Vdlm2decClientInput
+    }
+    for decoder in config['decoders']:
+      print("Setting up decoder {}".format(decoder['name']))
+      inp_str = decoder['input']['name']
+      inp = input_classes[inp_str](decoder)
+      inputs.append(inp)
+    print()
+
+    print('Inputs')
+    for client_input in inputs:
+      print("  - {}:{} (version: {}, receiver: {}, command: {}, params: {})".format(client_input.input_type, client_input.name, client_input.system_version(), client_input.receiver, client_input.command_path(), client_input.params()))
+    print()
+    print('Outputs')
+    for i in inputs:
+      print('  - {}:{}'.format(i.input_type, i.name))
+      for o in i.outputs:
+        print("    - {} (format: {})".format(o.output_name(), o.format))
+    print()
+    return inputs
+
+  @staticmethod
+  def start():
+    print('Airframes Decoder Client (afdc) - {}'.format(VERSION))
+    print('https://app.airframes.io/about')
+    print()
+
+    if Main.prepare_system() == False:
+      sys.exit(1)
+
+    config = Main.load_config('/boot/airframes.json')
+    inputs = Main.setup_inputs(config)
+    processes = []
+    try:
+      queue = multiprocessing.Queue()
+      for client_input in inputs:
+        p = multiprocessing.Process(target=start_client_input, args=(queue, client_input,))
+        p.name = client_input.name
+        processes.append(p)
+        p.start()
+      while True:
+        from_client_name, message = queue.get()
+        input = next(i for i in inputs if i.name == from_client_name)
+        Communication.broadcast_message(input, message)
+        for p in processes:
+          if p.is_alive == False:
+            print("Process {} is no longer alive, closing.".format(p))
+            p.close()
+            processes.remove(p)
+      for p in processes:
+        p.join()
+        p.terminate()
+        p.join()
+    except KeyboardInterrupt:
+      print('Keyboard interrupt, shutting down processes...')
+      sys.stdout.flush()
+      for p in processes:
+        print('Shutting down {} supervisor (PID {})'.format(p.name, p.pid))
+        sys.stdout.flush()
+        p.terminate()
+        p.join()
+        p.kill()
 
 def start_client_input(queue, client_input):
   """Start and handle a ClientInput"""
-  log_file = '/var/log/airframes/{}.log'.format(client_input.name)
+  log_file = '/var/log/airframes/{}.run.log'.format(client_input.name)
   logging.basicConfig(format='%(asctime)s: %(message)s', level=logging.INFO, handlers=[logging.FileHandler(log_file)], datefmt='%Y-%m-%d %H:%M:%S')
   logpipe = LogPipe(logging.INFO)
 
   logging.info('Started {}.'.format(client_input.name))
   with subprocess.Popen(shlex.split(client_input.full_command()),
     stdout=subprocess.PIPE, stderr=logpipe, universal_newlines=True) as process:
+
+    pid_file = '/var/run/airframes/{}.pid'.format(client_input.name)
+    if Pid.store_pid(pid_file, process.pid) == False:
+      print('Unable to create {}, shut down input {}.'.format(pid_file, client_input.name))
+      logpipe.close()
+      process.kill()
+      Pid.remove_pid(pid_file)
+      return False
+
     try:
       while True:
         stdout = process.stdout.readline().strip()
-        frame = {
-          'source': {
-            'app': {
-              'name': client_input.name,
-              'version': client_input.system_version()
-            }
-          },
-          'payload': stdout
-        }
         message = json.loads(stdout)
         queue.put((client_input.name, message))
 
@@ -373,60 +516,11 @@ def start_client_input(queue, client_input):
       print('Unexpected Exception: {}. Forcefully shutting down child exec process for {}'.format(sys.exc_info()[0], client_input.name))
       logpipe.close()
       process.kill()
+      sys.exit(1)
     else:
       print('Sanely shutting down {}', client_input.name)
       logpipe.close()
 
+
 if __name__ == '__main__':
-  config = load_config('/boot/airframes.json')
-  print('Config')
-  print(json.dumps(config))
-  print()
-
-  inputs = []
-  input_classes = {
-    'acarsdec': AcarsdecClientInput,
-    'dumpvdl2': Dumpvdl2ClientInput,
-    'vdlm2dec': Vdlm2decClientInput
-  }
-  for decoder in config['decoders']:
-    print("Setting up decoder {}".format(decoder['name']))
-    inp_str = decoder['input']['name']
-    inp = input_classes[inp_str](decoder)
-    print(inp)
-    inputs.append(inp)
-
-  print('Inputs')
-  for client_input in inputs:
-    print("  - {}:{} (version: {}, receiver: {}, command: {}, params: {})".format(client_input.input_type, client_input.name, client_input.system_version(), client_input.receiver, client_input.command_path(), client_input.params()))
-  print()
-
-  print('Outputs')
-  for i in inputs:
-    print('  - {}:{}'.format(i.input_type, i.name))
-    for o in i.outputs:
-      print("    - {} (format: {})".format(o.output_name(), o.format))
-  print()
-
-  processes = []
-  try:
-    queue = multiprocessing.Queue()
-    for client_input in inputs:
-      p = multiprocessing.Process(target=start_client_input, args=(queue, client_input,))
-      p.name = client_input.name
-      processes.append(p)
-      p.start()
-    while True:
-      from_client_name, message = queue.get()
-      input = next(i for i in inputs if i.name == from_client_name)
-      send_message_to_outputs(input, message)
-    for p in processes:
-      p.join()
-  except KeyboardInterrupt:
-    print('Keyboard interrupt, shutting down processes...')
-    sys.stdout.flush()
-    for p in processes:
-      print('Shutting down {}'.format(p.name))
-      sys.stdout.flush()
-      p.terminate()
-      p.join()
+  Main.start()
