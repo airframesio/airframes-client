@@ -51,25 +51,11 @@
           "port": 6000
         },
         {
-          "type": "net:udp",
-          "format": "af.json.v1",
-          "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
-          "hostname": "192.168.8.31",
-          "port": 6000
-        },
-        {
-          "type": "net:udp",
-          "format": "af.protobuf.v1",
-          "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
-          "hostname": "feed.acars.io",
-          "port": 6001
-        },
-        {
           "type": "net:grpc",
           "format": "af.protobuf.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
           "hostname": "192.168.8.31",
-          "port": 50051
+          "port": 6001
         }
       ]
     },
@@ -105,25 +91,11 @@
           "port": 6000
         },
         {
-          "type": "net:udp",
-          "format": "af.json.v1",
-          "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
-          "hostname": "192.168.8.31",
-          "port": 6000
-        },
-        {
-          "type": "net:udp",
-          "format": "af.protobuf.v1",
-          "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
-          "hostname": "feed.acars.io",
-          "port": 6001
-        },
-        {
           "type": "net:grpc",
           "format": "af.protobuf.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
           "hostname": "192.168.8.31",
-          "port": 50051
+          "port": 6001
         }
       ]
     },
@@ -158,17 +130,10 @@
           "port": 6000
         },
         {
-          "type": "net:udp",
-          "format": "af.json.v1",
-          "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
-          "hostname": "192.168.8.31",
-          "port": 6000
-        },
-        {
-          "type": "net:udp",
+          "type": "net:grpc",
           "format": "af.protobuf.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
-          "hostname": "feed.acars.io",
+          "hostname": "192.168.8.31",
           "port": 6001
         }
       ]
