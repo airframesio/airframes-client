@@ -7,7 +7,7 @@ python-requirements:
 
 install: python-requirements
 	mkdir -p $(DESTDIR)$(prefix)
-	install -D scripts/adc $(DESTDIR)$(prefix)/adc
+	install -d -D scripts/adc $(DESTDIR)$(prefix)/adc
 
 clean:
 
