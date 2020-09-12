@@ -21,6 +21,51 @@ Optionally install packages for support.
 * acarsdeco2
 * jaero
 
+## Installation
+
+### Packages
+
+Installation on a variety of platforms (Linux, MacOS, etc) using packages are not yet available.
+This is planned, but we do not yet have an ETA.
+
+### Installation Script
+
+The easiest way to install is by an installation script. However, keep in mind that this script is
+highly opinionated, and might not match your personal preferences. It will download and install
+all of the above supported dependencies. You may wish to review the
+[installation script](https://github.com/airframesio/airframes-client/blob/master/scripts/install_clients.sh)
+before you run the command below.
+
+```
+curl https://raw.githubusercontent.com/airframesio/airframes-client/master/scripts/install_clients.sh | sh
+```
+
+### Manually
+
+1. Clone the git repository.
+
+   ```
+   git clone https://github.com/airframesio/airframes-client.git
+   ```
+
+2. Run the following commands to install.
+
+   ```
+   cp airframes-client/json/airframes.json /boot/airframes.json
+   mkdir /usr/local/airframes
+   cp -rf airframes-client/scripts/adc /usr/local/airframes
+   cd /usr/local/airframes/adc
+   pip3 install -r requirements.txt
+   ```
+
+3. Install any of the optional decoder clients.
+
+4. Edit the `/boot/airframes.json` to configure.
+
+5. Run `/usr/local/airframes/adc/adc`.
+
+6. That's it!
+
 ## Interface
 
 The following is only available after the system package is installed.
@@ -187,7 +232,11 @@ by using the Airframes Client Config Tool (`airframes-config`) from the command-
 ```
 
 
-### Setup
+### Configuration
+
+Currently you must edit the `/boot/airframes.json` file yourself. The following is a proposal
+for how the Airframes Client Configuration Tool will work once it is complete.
+
 ```
 /usr/local/bin/airframes-config                    # Loads ncurses menu to configure airframes client
 /usr/local/bin/airframes-config set <var> <value>  # Set a specific config variable to a value
