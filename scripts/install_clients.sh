@@ -63,12 +63,13 @@ if [ ! -f "/boot/airframes.json" ]; then
 fi
 cp debian/adc.service /etc/systemd/system
 systemctl enable adc
-apt install -y python3 python3-pip python3-venv
+apt install -y python3 python3-pip python3-venv python3-wheel python3-dev
 mkdir -p /usr/local/airframes
 cp -rf scripts/adc /usr/local/airframes
 cd /usr/local/airframes/adc
 python3 -m venv venv
 source venv/bin/activate
+pip3 install wheel
 pip3 install -r requirements.txt
 echo
 
