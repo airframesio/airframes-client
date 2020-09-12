@@ -1,5 +1,11 @@
-# Airframes Decoder Client
+# Airframes Client
 
+The Airframes Client allows for interaction with the airframes.io service and provides two primary
+apps:
+* A feeder client (aptly named Airframes Decoder Client), that sends data to the aggregator service (and other outputs)
+* An API client (called the Airframes API Client), that can query and stream data from the Airframes API from the command line
+
+## Airframes Decoder Client
 The Airframes Decoder Client is an application that wraps and supervises ACARS/VDL/HFDL/AERO decoder clients
 (such as `acarsdec` and `vdlm2dec`) and then sends a sanitized, highly performant stream of the outputs to the Airframes
 aggregation server.
@@ -11,7 +17,7 @@ You can configure an unlimited number of decoder inputs and outputs (as many as 
 Particularly useful is the ability to send output to multiple destinations, such as to `feed.airframes.io` (the
 [Airframes aggregation service](https://app.airframes.io/about)), your own aggregator or project, and as many log files as you wish to use.
 
-## Dependencies
+### Dependencies
 
 Optionally install packages for support.
 
@@ -21,14 +27,14 @@ Optionally install packages for support.
 * acarsdeco2
 * jaero
 
-## Installation
+### Installation
 
-### Packages
+#### Packages
 
 Installation on a variety of platforms (Linux, MacOS, etc) using packages are not yet available.
 This is planned, but we do not yet have an ETA.
 
-### Installation Script
+#### Installation Script
 
 The easiest way to install is by an installation script. However, keep in mind that this script is
 highly opinionated, and might not match your personal preferences. It will download and install
@@ -40,7 +46,7 @@ before you run the command below.
 curl https://raw.githubusercontent.com/airframesio/airframes-client/master/scripts/install_clients.sh | sh
 ```
 
-### Manually
+#### Manually
 
 1. Clone the git repository.
 
@@ -66,21 +72,21 @@ curl https://raw.githubusercontent.com/airframesio/airframes-client/master/scrip
 
 6. That's it!
 
-## Interface
+### Interface
 
 The following is only available after the system package is installed.
 
-### Init
+#### Init
 * `/etc/init.d/airframes-client start`
 * `/etc/init.d/airframes-client stop`
 * `/etc/init.d/airframes-client restart`
 
 
-### Binaries/scripts
+#### Binaries/scripts
 * `/usr/local/airframes/adc/adc` - Airframes Decoder Client
 * `/usr/local/bin/airframes-config` - Airframes Client Config Tool
 
-### Config
+#### Config
 `/boot/airframes.json`
 
 The meat of the configuration for ADC is in this file. It may seem overwhelming at first since you must
@@ -232,7 +238,7 @@ by using the Airframes Client Config Tool (`airframes-config`) from the command-
 ```
 
 
-### Configuration
+#### Configuration
 
 Currently you must edit the `/boot/airframes.json` file yourself. The following is a proposal
 for how the Airframes Client Configuration Tool will work once it is complete.
@@ -252,7 +258,7 @@ for how the Airframes Client Configuration Tool will work once it is complete.
 /usr/local/bin/airframes-config set output.protocol json          # Later: protobuf
 ```
 
-### Processes
+#### Processes
 
 The primary Airframes Decoder Client process `adc` spawns a supervisor process for each decoder input you configure and run.
 It will appear as if `adc` is running multiple times, but if you enable heiarchy when you look at the process
@@ -269,9 +275,9 @@ list you will see that they are child processes.
 31908 pts/1    Sl+    0:05           /usr/local/bin/dumpvdl2 --rtlsdr 2 --gain 40 136650000 136800000 136975000 --output decoded:json:file:path=-
 ```
 
-### Destination Output
+#### Destination Output
 
-#### gRPC + protobuf
+##### gRPC + protobuf
 
 In order to keep the data streams light and performant, we have chosen to primarily focus on using
 binary protobuf streams over gRPC in order to send message data to net-based outputs (such as the
@@ -280,7 +286,7 @@ Airframes aggregator).
 You can review the [protobuf definitions](https://github.com/airframesio/airframes-client/blob/master/protobuf/airframes_client_frame.proto) to
 better understand the structure of what is sent.
 
-#### JSON
+##### JSON
 
 This is a proposed JSON output format (for net-based outputs only). It has not yet been enabled.
 ```
@@ -306,3 +312,8 @@ This is a proposed JSON output format (for net-based outputs only). It has not y
   }
 }
 ```
+
+## Airframes API Client
+
+The Airframes API Client is a command-line tool that lets you query and stream data from the airframes.io API.
+It is not yet available, but it will be here once we have finished the first release.
