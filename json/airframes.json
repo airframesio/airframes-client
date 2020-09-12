@@ -21,7 +21,7 @@
     {
       "name": "acarsdec",
       "input": {
-        "type": "client",
+        "type": "decoder",
         "name": "acarsdec",
         "path": "/usr/local/bin/acarsdec",
         "config": {
@@ -62,7 +62,7 @@
     {
       "name": "vdlm2dec",
       "input": {
-        "type": "client",
+        "type": "decoder",
         "name": "vdlm2dec",
         "path": "/usr/local/bin/vdlm2dec",
         "config": {
@@ -102,7 +102,7 @@
     {
       "name": "dumpvdl2",
       "input": {
-        "type": "client",
+        "type": "decoder",
         "name": "dumpvdl2",
         "path": "/usr/local/bin/dumpvdl2",
         "config": {
