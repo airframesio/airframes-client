@@ -1,7 +1,7 @@
-# airframes-decoder-client
+# Airframes Decoder Client
 
-The Airframes Decoder Client (afdc) is an application that wraps and supervises other ACARS/VDL decoder clients
-(such as `acarsdec` and `vdlm2dec`) and sends a sanitized, highly performant stream of the outputs to the Airframes
+The Airframes Decoder Client is an application that wraps and supervises ACARS/VDL/HFDL/AERO decoder clients
+(such as `acarsdec` and `vdlm2dec`) and then sends a sanitized, highly performant stream of the outputs to the Airframes
 aggregation server.
 
 Fundamentally, using the Airframes Decoder Client means that you will no longer need to run the decoder clients
@@ -23,6 +23,8 @@ Optionally install packages for support.
 
 ## Interface
 
+The following is only available after the system package is installed.
+
 ### Init
 * `/etc/init.d/airframes-client start`
 * `/etc/init.d/airframes-client stop`
@@ -30,14 +32,16 @@ Optionally install packages for support.
 
 
 ### Binaries/scripts
-* `/usr/local/bin/afc`
-* `/usr/local/bin/airframes-config`
+* `/usr/local/airframes/adc/adc` - Airframes Decoder Client
+* `/usr/local/bin/airframes-config` - Airframes Client Config Tool
 
 ### Config
 `/boot/airframes.json`
 
+The meat of the configuration for ADC is in this file. It may seem overwhelming at first since you must
+currently define and edit this file by hand. In the near future this file will be managed more easily
+by using the Airframes Client Config Tool (`airframes-config`) from the command-line.
 ```
-{
 {
   "system": {
     "networking": {
@@ -61,7 +65,7 @@ Optionally install packages for support.
     {
       "name": "acarsdec",
       "input": {
-        "type": "client",
+        "type": "decoder",
         "name": "acarsdec",
         "path": "/usr/local/bin/acarsdec",
         "config": {
@@ -102,7 +106,7 @@ Optionally install packages for support.
     {
       "name": "vdlm2dec",
       "input": {
-        "type": "client",
+        "type": "decoder",
         "name": "vdlm2dec",
         "path": "/usr/local/bin/vdlm2dec",
         "config": {
@@ -142,7 +146,7 @@ Optionally install packages for support.
     {
       "name": "dumpvdl2",
       "input": {
-        "type": "client",
+        "type": "decoder",
         "name": "dumpvdl2",
         "path": "/usr/local/bin/dumpvdl2",
         "config": {
@@ -201,16 +205,35 @@ Optionally install packages for support.
 
 ### Processes
 
+The primary Airframes Decoder Client process `adc` spawns a supervisor process for each decoder input you configure and run.
+It will appear as if `adc` is running multiple times, but if you enable heiarchy when you look at the process
+list you will see that they are child processes.
+
+`ps ax -H`
 ```
-123 /usr/local/bin/afc --config=/boot/airframes.json
-124 /usr/local/bin/acarsdec -v -o 4 -g 40 -i KE-KMHR1 -o 4 -r 0 131.550 131.525 131.725 130.025 130.450 131.125
-125 /usr/local/bin/dumpvdl2 --rtlsdr 0 --gain 40 136650000 136800000 136975000 --output decoded:json:path=-
+31833 pts/1    Sl+    0:00       python3 /usr/local/airframes/adc/adc
+31868 pts/1    Sl+    0:00         python3 /usr/local/airframes/adc/adc
+31890 pts/1    Rl+    0:08           /usr/local/bin/acarsdec -v -o 4 -g 400 -i KE-KMHR1 -r 0 131.550 131.525 131.725 130.025 130.450 131.125
+31875 pts/1    Sl+    0:00         python3 /usr/local/airframes/adc/adc
+31900 pts/1    Sl+    0:02           /usr/local/bin/vdlm2dec -v -J -G -E -U -g 400 -i KE-KMHR2 -r 1 136.650 136.800 136.975
+31883 pts/1    Sl+    0:00         python3 /usr/local/airframes/adc/adc
+31908 pts/1    Sl+    0:05           /usr/local/bin/dumpvdl2 --rtlsdr 2 --gain 40 136650000 136800000 136975000 --output decoded:json:file:path=-
 ```
 
 ### Destination Output
 
-JSON:
+#### gRPC + protobuf
 
+In order to keep the data streams light and performant, we have chosen to primarily focus on using
+binary protobuf streams over gRPC in order to send message data to net-based outputs (such as the
+Airframes aggregator).
+
+You can review the [protobuf definitions](https://github.com/airframesio/airframes-client/blob/master/protobuf/airframes_client_frame.proto) to
+better understand the structure of what is sent.
+
+#### JSON
+
+This is a proposed JSON output format (for net-based outputs only). It has not yet been enabled.
 ```
 {
   "source": {
