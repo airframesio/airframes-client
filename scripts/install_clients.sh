@@ -11,12 +11,12 @@ echo
 
 echo "[Airframes] Pulling down sources"
 cd ${SOURCE_PATH}
-git clone https://github.com/airframesio/airframes-client.git
-git clone https://github.com/TLeconte/acarsdec.git
-git clone https://github.com/szpajder/libacars.git
-git clone https://github.com/romanbsd/statsd-c-client.git
-git clone https://github.com/airframesio/dumpvdl2.git
-git clone https://github.com/TLeconte/vdlm2dec.git
+git clone --depth 1 --single-branch https://github.com/airframesio/airframes-client.git
+git clone --depth 1 --single-branch https://github.com/TLeconte/acarsdec.git
+git clone --depth 1 --single-branch https://github.com/szpajder/libacars.git
+git clone --depth 1 --single-branch https://github.com/romanbsd/statsd-c-client.git
+git clone --depth 1 --single-branch https://github.com/airframesio/dumpvdl2.git
+git clone --depth 1 --single-branch https://github.com/TLeconte/vdlm2dec.git
 echo
 
 echo "[Airframes] Building libacars"
