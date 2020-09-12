@@ -6,7 +6,7 @@ python-requirements:
 	pip3 install -r scripts/adc/requirements.txt
 
 install: python-requirements
-	mkdir $(DESTDIR)$(prefix)
+	mkdir -p $(DESTDIR)$(prefix)
 	install -D scripts/adc $(DESTDIR)$(prefix)/adc
 
 clean:
