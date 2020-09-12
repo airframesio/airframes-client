@@ -9,7 +9,7 @@ RestartSec=1
 StartLimitBurst=5
 StartLimitIntervalSec=10
 ExecStartPre=/bin/mkdir -p /var/log/airframes /var/run/airframes
-ExecStart=/usr/local/airframes/adc/venv/bin/adc
+ExecStart=/usr/local/airframes/adc/venv/bin/python3 /usr/local/airframes/adc/adc
 
 [Install]
 WantedBy=multi-user.target
