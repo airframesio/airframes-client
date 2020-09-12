@@ -1,15 +1,15 @@
 Source: airframes-client
-Section: unknown
-Priority: optional
+Section: embedded
+Priority: extra
 Maintainer: Kevin Elliott <kevin@airframes.io>
-Build-Depends: debhelper (>= 11)
+Build-Depends: debhelper (>= 11), pkg-config, dh-systemd
 Standards-Version: 4.1.3
 Homepage: https://github.com/airframesio/airframes-client
-#Vcs-Browser: https://salsa.debian.org/debian/airframes-client
-#Vcs-Git: https://salsa.debian.org/debian/airframes-client.git
+Vcs-Git: https://github.com/airframesio/airframes-client.git
 
 Package: airframes-client
-Architecture: any
+Architecture: all
+Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}, python3
 Description: Decoder and API clients for airframes.io
  Airframes Client contains the Airframes Decoder Client and
