@@ -67,8 +67,8 @@ apt install -y python3 python3-pip python3-venv
 mkdir -p /usr/local/airframes
 cp -rf scripts/adc /usr/local/airframes
 cd /usr/local/airframes/adc
-python3 -m venv airframes
-source airframes/bin/activate
+python3 -m venv venv
+source venv/bin/activate
 pip3 install -r requirements.txt
 echo
 
