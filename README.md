@@ -1,4 +1,15 @@
-# airframes-client
+# airframes-decoder-client
+
+The Airframes Decoder Client (afdc) is an application that wraps and supervises other ACARS/VDL decoder clients
+(such as `acarsdec` and `vdlm2dec`) and sends a sanitized, highly performant stream of the outputs to the Airframes
+aggregation server.
+
+Fundamentally, using the Airframes Decoder Client means that you will no longer need to run the decoder clients
+manually or using system services, and they are centrally configured using a `/boot/airframes.json` file.
+
+You can configure an unlimited number of decoder inputs and outputs (as many as your system can handle simultaneously).
+Particularly useful is the ability to send output to multiple destinations, such as to `feed.airframes.io` (the
+Airframes aggregation service), your own aggregator or project, and as many log files as you wish to use.
 
 ## Dependencies
 
@@ -27,9 +38,10 @@ Optionally install packages for support.
 
 ```
 {
+{
   "system": {
     "networking": {
-      "hostname": "adsb1",
+      "hostname": "airband1",
       "dhcp": true,
       "wifi": {
         "ssid": "YOUR SSID",
@@ -64,6 +76,11 @@ Optionally install packages for support.
         {
           "type": "logfile",
           "format": "af.json.v1",
+          "path": "/var/log/airframes/airframes.data.json"
+        },
+        {
+          "type": "logfile",
+          "format": "af.json.v1",
           "path": "/var/log/airframes/acarsdec.data.json"
         },
         {
@@ -74,10 +91,10 @@ Optionally install packages for support.
           "port": 6000
         },
         {
-          "type": "net:udp",
+          "type": "net:grpc",
           "format": "af.protobuf.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
-          "hostname": "feed.acars.io",
+          "hostname": "192.168.8.31",
           "port": 6001
         }
       ]
@@ -99,6 +116,11 @@ Optionally install packages for support.
         {
           "type": "logfile",
           "format": "af.json.v1",
+          "path": "/var/log/airframes/airframes.data.json"
+        },
+        {
+          "type": "logfile",
+          "format": "af.json.v1",
           "path": "/var/log/airframes/vdlm2dec.data.json"
         },
         {
@@ -109,10 +131,10 @@ Optionally install packages for support.
           "port": 6000
         },
         {
-          "type": "net:udp",
+          "type": "net:grpc",
           "format": "af.protobuf.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
-          "hostname": "feed.acars.io",
+          "hostname": "192.168.8.31",
           "port": 6001
         }
       ]
@@ -133,6 +155,11 @@ Optionally install packages for support.
         {
           "type": "logfile",
           "format": "af.json.v1",
+          "path": "/var/log/airframes/airframes.data.json"
+        },
+        {
+          "type": "logfile",
+          "format": "af.json.v1",
           "path": "/var/log/airframes/dumpvdl2.data.json"
         },
         {
@@ -143,10 +170,10 @@ Optionally install packages for support.
           "port": 6000
         },
         {
-          "type": "net:udp",
+          "type": "net:grpc",
           "format": "af.protobuf.v1",
           "feed": { "id": "8362191b-7193-4c12-87cd-024716d107ed" },
-          "hostname": "feed.acars.io",
+          "hostname": "192.168.8.31",
           "port": 6001
         }
       ]
