@@ -47,3 +47,14 @@ mkdir build
 cd build
 cmake .. -Drtl=ON
 make && make install
+
+echo "[Airframes] Installing airframes-client"
+cd ${SOURCE_PATH}/airframes-client
+if [ ! -f "/boot/airframes.json" ]; then
+  cp json/airframes.json /boot/airframes.json
+fi
+apt install -y python3
+mkdir -p /usr/local/airframes
+cp -rf scripts/adc /usr/local/airframes
+cd /usr/local/airframes/adc
+pip3 install -r scripts/requirements.txt
