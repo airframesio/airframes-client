@@ -57,4 +57,4 @@ apt install -y python3
 mkdir -p /usr/local/airframes
 cp -rf scripts/adc /usr/local/airframes
 cd /usr/local/airframes/adc
-pip3 install -r scripts/requirements.txt
+pip3 install -r requirements.txt
