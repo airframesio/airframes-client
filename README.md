@@ -9,7 +9,7 @@ manually or using system services, and they are centrally configured using a `/b
 
 You can configure an unlimited number of decoder inputs and outputs (as many as your system can handle simultaneously).
 Particularly useful is the ability to send output to multiple destinations, such as to `feed.airframes.io` (the
-Airframes aggregation service), your own aggregator or project, and as many log files as you wish to use.
+[Airframes aggregation service](https://app.airframes.io/about)), your own aggregator or project, and as many log files as you wish to use.
 
 ## Dependencies
 
