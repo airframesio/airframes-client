@@ -2,11 +2,11 @@
 
 The Airframes Client allows for interaction with the airframes.io service and provides two primary
 apps:
-* A feeder client (aptly named Airframes Decoder Client), that sends data to the aggregator service (and other outputs)
+* A feeder client wrapper (aptly named Airframes Client Manager), that sends data to the aggregator service (and other outputs)
 * An API client (called the Airframes API Client), that can query and stream data from the Airframes API from the command line
 
-## Airframes Decoder Client
-The Airframes Decoder Client is an application that wraps and supervises ACARS/VDL/HFDL/AERO decoder clients
+## Airframes Client Manager
+The Airframes Client Manager is an application that wraps and supervises ACARS/VDL/HFDL/AERO decoder clients
 (such as `acarsdec` and `vdlm2dec`) and then sends a sanitized, highly performant stream of the outputs to the Airframes
 aggregation server.
 
