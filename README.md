@@ -2,8 +2,8 @@
 
 The Airframes Client allows for interaction with the airframes.io service and provides two primary
 apps:
-* A feeder client wrapper (aptly named Airframes Client Manager), that sends data to the aggregator service (and other outputs)
-* An API client (called the Airframes API Client), that can query and stream data from the Airframes API from the command line
+* Airframes Client Manager (acm) - A feeder client wrapper that sends data to the aggregator service (and other outputs)
+* Airframes API Client (aac) - An API client that can query and stream data from the Airframes API from the command line
 
 ## Airframes Client Manager
 The Airframes Client Manager is an application that wraps and supervises ACARS/VDL/HFDL/AERO decoder clients
