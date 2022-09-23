@@ -5,7 +5,7 @@ grpcio-tools==1.31.0
 isort==5.4.2
 lazy-object-proxy==1.4.3
 mccabe==0.6.1
-protobuf==3.13.0
+protobuf==3.18.3
 pylint==2.6.0
 six==1.15.0
 toml==0.10.1
