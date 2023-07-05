@@ -1,6 +1,6 @@
 astroid==2.4.2
 distro==1.5.0
-grpcio==1.31.0
+grpcio==1.53.0
 grpcio-tools==1.31.0
 isort==5.4.2
 lazy-object-proxy==1.4.3
